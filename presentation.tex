@@ -153,44 +153,46 @@ Linked coupled cluster equations:
 
 
 \section{Coupled Cluster Quantum Monte Carlo}
-\begin{frame}
-\frametitle{Projector Monte Carlo}
-Start with TDSE:
-\begin{equation*}
--i\hbar \frac{\partial}{\partial t} |\Psi(t)\rangle= \hat{H} |\Psi(t)\rangle,
-\end{equation*}
-Wick rotation of time to the standard TDSE:
-\begin{equation*}
--\frac{\partial}{\partial \tau} |\Psi(\tau)\rangle= \hat{H} |\Psi(\tau)\rangle,
-\end{equation*}
-Given a starting wavefunction $|\Psi^{(\tau = 0)}\rangle$, the wavefunction for arbitrary $\tau$ can be expressed with a propagator:
-\begin{equation*}
-|\Psi^{(\tau)}\rangle \propto e^{-\tau \hat{H}}|\Psi^{(\tau = 0)}\rangle,
-\end{equation*}
-\end{frame}
 
 \begin{frame}
-\frametitle{Projector Monte Carlo}
-Assuming that initial wave function has nonzero overlap with the ground state of the Hamiltonian:
-\begin{equation*}
-|\Psi_0\rangle = \lim_{\tau \rightarrow \infty} e^{-\tau (\hat{H}-S)}|\Psi^{(\tau = 0)}\rangle,
-\end{equation*}
-Approximating the exponential propagator by repeated application of the linear propagator:
-\begin{equation*}
-|\Psi_0\rangle = \lim_{N \rightarrow \infty} \Big[1 - \delta \tau (\hat{H}-S)\Big]^N |\Psi^{(\tau = 0)}\rangle,
-\end{equation*}
-The ground state wavefunction is obtained by an iterative application of a projection operator for a sufficient number of times:
-\begin{equation*}
-|\Psi^{(\tau + \delta \tau)}\rangle = (1 - \delta \tau(\hat{H}-S))| \Psi^{(\tau)}\rangle.
-\end{equation*}
+\frametitle{Projector Monte Carlo Methods}
+How do we implement Projector Monte Carlo?
+\begin{itemize}
+	 \uncover<1->{\item Perform Wick rotation to move from time dependent Schr\"{o}dinger equation (TDSE) to TISE
+	\begin{equation*}
+	-i\hbar \frac{\partial}{\partial t} |\Psi(t)\rangle= \hat{H} |\Psi(t)\rangle \Longrightarrow -\frac{\partial}{\partial \tau} |\Psi(\tau)\rangle= \hat{H} |\Psi(\tau)\rangle,
+	\end{equation*}}
+	\uncover<2->{\item  Express the wavefunction for arbitrary $\tau$ with a propagator:
+	\begin{equation*}
+	|\Psi^{(\tau)}\rangle \propto e^{-\tau \hat{H}}|\Psi^{(\tau = 0)}\rangle,
+	\end{equation*}}
+	\uncover<3->{\item Assume that initial wave function has nonzero overlap with the ground state of the Hamiltonian:
+	\begin{equation*}
+	|\Psi_0\rangle = \lim_{\tau \rightarrow \infty} e^{-\tau (\hat{H}-S)}|\Psi^{(\tau = 0)}\rangle,
+	\end{equation*}}
+\end{itemize}
 \end{frame}
+
+\begin{frame}{Projector Monte Carlo Methods}
+How do we implement Projector Monte Carlo?
+\begin{itemize}
+	\uncover<1->{
+		\item Approximate the exponential propagator by repeated application of the linear propagator:
+		\begin{equation*}
+		|\Psi_0\rangle = \lim_{N \rightarrow \infty} \Big[1 - \delta \tau (\hat{H}-S)\Big]^N |\Psi^{(\tau = 0)}\rangle,
+		\end{equation*}}
+	\uncover<2->{\item  Introduce wave-function for the imaginary time $\tau + \delta \tau$:
+		\begin{equation*}
+		|\Psi^{(\tau + \delta \tau)}\rangle = (1 - \delta \tau(\hat{H}-S))| \Psi^{(\tau)}\rangle.
+		\end{equation*}}
+\end{itemize}
+\uncover<3->{Now we are ready for the stochastic Coupled Cluster!}
+\end{frame}
+
 
 \begin{frame}
 \frametitle{Coupled Cluster Quantum Monte Carlo}
-\begin{equation*}
-|\Psi^{(\tau + \delta \tau)}\rangle = (1 - \delta \tau(\hat{H}-S))| \Psi^{(\tau)}\rangle,
-\end{equation*}
-\uncover<1->{Use the exponential ansatz for wavefunction and project equation on the excited determinant $D_{\{\boldsymbol{i}\}}$:}
+\uncover<1->{Use the exponential ansatz for wave function and project equation on the excited determinant $D_{\{\boldsymbol{i}\}}$:}
 \uncover<1->{\begin{align*}
 	\langle D_{\{\boldsymbol{i}\}}|\Psi_{CC}^{(\tau + \delta \tau)}\rangle = \langle D_{\{\boldsymbol{i}\}}|1 - \delta \tau (\hat{H}-S)|\Psi_{CC}^{(\tau)}\rangle,\\
 	\langle D_{\{\boldsymbol{i}\}}|e^{\hat{T}}D_0\rangle = \langle D_{\{\boldsymbol{i}\}}|e^{\hat{T}}D_0\rangle - \delta \tau \langle D_{\{\boldsymbol{i}\}}|(\hat{H}-S)e^{\hat{T}}|D_0\rangle,
