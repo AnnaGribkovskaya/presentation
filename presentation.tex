@@ -1,8 +1,94 @@
 \documentclass{beamer}
+\usetheme{metropolis}           % Use metropolis theme
+\usefonttheme[onlymath]{serif}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage[style=authortitle,backend=bibtex]{biblatex}
+
+\usetikzlibrary{calc,trees,positioning,arrows,chains,shapes.geometric,%
+	decorations.pathreplacing,decorations.pathmorphing,shapes,%
+	matrix,shapes.symbols,decorations.markings}
+\tikzset{
+	>=stealth',
+	punktchain/.style={
+		rectangle, 
+		rounded corners, 
+		% fill=black!10,
+		draw=black, very thick,
+		text width=7em, 
+		minimum height=3em, 
+		text centered, 
+		on chain},
+	line/.style={draw, thick, <-},
+	element/.style={
+		tape,
+		top color=white,
+		bottom color=blue!50!black!60!,
+		minimum width=8em,
+		draw=blue!40!black!90, very thick,
+		text width=6em, 
+		minimum height=3.5em, 
+		text centered, 
+		on chain},
+	every join/.style={->, thick,shorten >=2pt},
+	decoration={brace,mirror, amplitude=5pt},
+	tuborg/.style={decorate},
+	tubnode/.style={midway, right=2pt},
+}
+
+
+\tikzstyle{roundrect}=[rectangle, rounded corners, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=nodeColor, text width=5cm] 
+\tikzstyle{roundrectSmall}=[rectangle, rounded corners, minimum width=0.2cm, minimum height=0.7cm, text centered, draw=black, fill=nodeColor, text width=1.8cm] 
+\tikzstyle{roundrectSmallLong}=[rectangle, rounded corners, minimum width=0.2cm, minimum height=0.7cm, text centered, draw=black, fill=nodeColor, text width=3cm] 
+
+\tikzstyle{decision} = [diamond, minimum width=3.7cm, minimum height=3.2cm, text centered, draw=black, fill=decisionColor, scale=1, text width=2.05cm]
+\tikzstyle{arrow} = [decoration={markings,mark=at position 1 with
+	{\arrow[scale=1.5,>=stealth]{>}}},postaction={decorate}]
+%https://tex.stackexchange.com/questions/50780/arrows-at-right-angles-on-a-tikzpicture-matrix
+\tikzset{
+	desicion/.style={
+		diamond,
+		draw,
+		text width=3em,
+		text badly centered,
+		inner sep=0pt
+	},
+	block/.style={
+		rectangle,
+		draw,
+		text width=10em,
+		text centered,
+		rounded corners
+	},
+	cloud/.style={
+		draw,
+		ellipse,
+		minimum height=2em
+	},
+	descr/.style={
+		fill=white,
+		inner sep=2.5pt
+	},
+	connector/.style={
+		-latex
+	},
+	rectangle connector/.style={
+		connector,
+		to path={(\tikztostart) -- ++(#1,0pt) \tikztonodes |- (\tikztotarget) },
+		pos=0.5
+	},
+	rectangle connector/.default=-2cm,
+	straight connector/.style={
+		connector,
+		to path=--(\tikztotarget) \tikztonodes
+	}
+}
+
 \setbeamertemplate{caption}{\insertcaption}
+
 \usepackage{cancel}
 \renewcommand\CancelColor{<color command>}
-\usefonttheme[onlymath]{serif}
 \usepackage{xcolor}
 \newcommand\Ccancel[2][black]{\renewcommand\CancelColor{\color{#1}}\cancel{#2}}
 
@@ -11,7 +97,8 @@
 \definecolor{decisionColor}{HTML}{DEE1B2}
 \definecolor{nodeColor}{HTML}{EBFAFF}
 \def\mathunderline#1#2{\color{#1}\underline{{\color{black}#2}}\color{black}}
-\usetheme{metropolis}           % Use metropolis theme
+
+
 \title{Master thesis presentation\\
 STOCHASTIC APPROACH TO MANY-BODY PROBLEMS}
 \date{\today}
@@ -22,8 +109,10 @@ STOCHASTIC APPROACH TO MANY-BODY PROBLEMS}
   \section{Introduction}
    \begin{frame}{Outline}
    \begin{itemize}
+   	\item Main Objectives
    	\item Many body \textit{Ab initio} methods: deterministic and stochastic
    	\item Many-body problem formulation
+   	\item Slater Determinant space
    	\item Coupled Cluster Theory
    	\item Coupled Cluster Quantum Monte Carlo
    	\item Results
@@ -104,7 +193,7 @@ For fermions the wave function must be antisymmetric:
  \begin{frame}{Many-body: Size of the Slater Determinant Space}
 An orthonormal set of 2M spin-orbitals, where N are occupied.
 \begin{equation*}
-\binom {2M}{N} = \frac{N!}{2M!(2M-N)!}, 
+\binom {N}{2M} = \frac{N!}{2M!(2M-N)!}, 
 \end{equation*}
 
 For the electron gas:\\
@@ -172,7 +261,7 @@ However for practical purposes we are using so-called similarly transformed Hami
 \frametitle{Coupled Cluster Quantum Monte Carlo}
 CCQMC is a Projector Monte Carlo Method and can be introduced as follows: 
 \begin{itemize}
-	 \uncover<1->{\item Perform Wick rotation to move from time dependent Schr\"{o}dinger equation (TDSE) to TISE
+	 \uncover<1->{\item Perform Wick rotation for time dependent Schr\"{o}dinger equation 
 	\begin{equation*}
 	-i\hbar \frac{\partial}{\partial t} |\Psi(t)\rangle= \hat{H} |\Psi(t)\rangle \Longrightarrow -\frac{\partial}{\partial \tau} |\Psi(\tau)\rangle= \hat{H} |\Psi(\tau)\rangle,
 	\end{equation*}}
@@ -199,11 +288,9 @@ CCQMC is a Projector Monte Carlo Method and can be introduced as follows:
 		\begin{equation*}
 		|\Psi^{(\tau + \delta \tau)}\rangle = (1 - \delta \tau(\hat{H}-S))| \Psi^{(\tau)}\rangle.
 		\end{equation*}}
-	
-	\uncover<3->{\item Insert a coupled cluster approximation for the wave function and project equation on the excited determinant $D_{\{\boldsymbol{i}\}}$:}
-	\uncover<3->{\begin{align*}
-		\langle D_{\{\boldsymbol{i}\}}|e^{\hat{T}}D_0\rangle = \langle D_{\{\boldsymbol{i}\}}|e^{\hat{T}}D_0\rangle - \delta \tau \langle D_{\{\boldsymbol{i}\}}|(\hat{H}-S)e^{\hat{T}}|D_0\rangle,
-		\end{align*}}
+	\uncover<3->{\item Introduce some new notations to simplify equations:
+	\[ |D_{\boldsymbol{i}}\rangle = \hat{c}_{\boldsymbol{i}}|D_0\rangle,\]
+here $\hat{c}_{\boldsymbol{i}}$ a string of creation and annihilation operators}
 \end{itemize}
 
 \end{frame}
@@ -212,11 +299,15 @@ CCQMC is a Projector Monte Carlo Method and can be introduced as follows:
 \begin{frame}
 \frametitle{Coupled Cluster Quantum Monte Carlo}
 \begin{itemize}
-\uncover<1->{\item Express the RHS of the above equation in terms of amplitudes:}
-\uncover<1->{\begin{equation*}
+		\uncover<1->{\item Insert a coupled cluster approximation for the wave function and project equation on the excited determinant $D_{\{\boldsymbol{i}\}}$:}
+	\uncover<1->{\begin{align*}
+		\langle D_{\{\boldsymbol{i}\}}|e^{\hat{T}}D_0\rangle = \langle D_{\{\boldsymbol{i}\}}|e^{\hat{T}}D_0\rangle - \delta \tau \langle D_{\{\boldsymbol{i}\}}|(\hat{H}-S)e^{\hat{T}}|D_0\rangle,
+		\end{align*}}
+\uncover<2->{\item Express the RHS of the above equation in terms of amplitudes:}
+\uncover<2->{\begin{equation*}
 	\langle D_{\boldsymbol{i}}|e^{\hat{T}^{(\tau)}}D_0\rangle = t_{\boldsymbol{i}}^{(\tau)} + \mathcal{O}(\hat{T}^2),
 	\end{equation*}}
-\uncover<2->{\item Derive the equation for the amplitudes for $\tau+\delta\tau$: 
+\uncover<3->{\item Derive the equation for the amplitudes for $\tau+\delta\tau$: 
 	\begin{equation*}
 	t_{\{\boldsymbol{i}\}}^{(\tau+\delta\tau)}  \only<3>{+\mathcal{O}(\hat{T}^2)\phantom{2}}\only<4>{+\Ccancel[red]{\mathcal{O}(\hat{T}^2)}\phantom{2}}\only<5>{} = t_{\{\boldsymbol{i}\}}^{(\tau)}  \only<3>{+\mathcal{O}(\hat{T}^2)\phantom{2}}\only<4>{+\Ccancel[red]{\mathcal{O}(\hat{T}^2)}\phantom{2}}\only<5>{} - \delta \tau \langle D_{\{\boldsymbol{i}\}}|(\hat{H}-S)e^{\hat{T}}|D_0\rangle,
 	\end{equation*}}
@@ -230,33 +321,92 @@ CCQMC is a Projector Monte Carlo Method and can be introduced as follows:
 
 \begin{frame}
 \frametitle{Coupled Cluster Quantum Monte Carlo}
-Diffusion equation with the first-order rate term for chemically reactive systems:
-\begin{equation*}
-\frac{\partial C}{\partial t} = D\nabla^2 C - kC,
-\end{equation*}
-\uncover<2->{Diffusion Monte Carlo  Schr\"{o}dinger Equation :}
-\uncover<2->{\begin{equation*}
-	-\frac{\partial}{\partial \tau} |\Psi(\tau)\rangle= (\only<2>{\frac{1}{2}\nabla^2}  - \only<2>{(\hat{V} -E_0)}) |\Psi(\tau)\rangle,
-	\end{equation*}}
-\end{frame}
-
-
-\begin{frame}
-\frametitle{Coupled Cluster Quantum Monte Carlo}
+The equation we obtained is very similar to a diffusion one. Now we need to introduce particles or walkers to simulate the population dynamics. We use random walkers to obtain amplitudes. In this case walkers are called ${\color{red}excips}$. 
 \begin{equation*}	
 \frac{\delta t_{\{\boldsymbol{i}\}}}{\delta\tau} = -\langle D_{\{\boldsymbol{i}\}}|(\hat{H}-S)e^{\hat{T}}|D_0\rangle,
 \end{equation*}
-Amplitudes $\rightarrow$ walkers $\equiv$ {\color{red}excips}
+Each amplitude corresponds to an excited determinant or ${\color{red}excitor}$. The population of excips on a given excitor is proportional to the amplitude:
 \begin{equation*}	
-t_{\boldsymbol{i}} \propto N_{\boldsymbol{i}} = \sum_\alpha s_\alpha \delta_{{\boldsymbol{i}},{\boldsymbol{i}}_\alpha} ,\ \ \ |D_{\boldsymbol{i}}\rangle = \hat{c}_{\boldsymbol{i}}|D_0\rangle,
+t_{\boldsymbol{i}} \propto N_{\boldsymbol{i}} = \sum_\alpha s_\alpha \delta_{{\boldsymbol{i}}, {\boldsymbol{i}}_\alpha} \text{ and }  N_{ex} = \sum_{\boldsymbol{i}} |N_{\boldsymbol{i}}|
 \end{equation*}
-Excip $\alpha$ is located on a determinant ${\boldsymbol{i}}_\alpha$ and has sign $s_\alpha = \pm 1$.
-\begin{equation*}	
-N_{ex} = \sum_{\boldsymbol{i}} |N_{\boldsymbol{i}}|, 
+here $s_\alpha = \pm 1$ is sign of excip, $t_{\boldsymbol{i}}$ is an amplitude corresponding to the determinant ${{\boldsymbol{i}}_\alpha}$. %The wave function is this case is written as:
+%\only<1>{\begin{equation*}
+%\Psi_{cc} = \big[1 + \sum_{\boldsymbol{i}} %t_{\boldsymbol{i}}\hat{a}_{\boldsymbol{i}} + \frac{1}{ %2!}\sum_{\boldsymbol{ij}} t_{\boldsymbol{i}} t_{\boldsymbol{j}} %\hat{a}_{\boldsymbol{i}} \hat{a}_{\boldsymbol{j}} + \frac{1}{ %3!}\sum_{\boldsymbol{ijk}}t_{\boldsymbol{i}} t_{\boldsymbol{j}} %t_{\boldsymbol{k}} \hat{a}_{\boldsymbol{i}} \hat{b}_{\boldsymbol{j}} %\hat{a}_{\boldsymbol{k}} + ...  \big]|D_0\rangle.
+%\end{equation*}}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{CCQMC: Game of Life}
+\end{frame}
+
+\begin{frame}
+\frametitle{First Iteration}
+\begin{tikzpicture}[scale=.9,every node/.style={minimum size=1cm},on grid]
+\begin{scope}[
+yshift=-5,every node/.append style={
+	yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
+]
+\uncover<10->{\fill[greennewcolor,fill opacity=.4] (2.97,0.05) rectangle (2.53,0.46);}
+\uncover<10->{\draw[black,densely dotted] (2.97,0.05) rectangle (2.53,0.46);}
+\end{scope}
+
+\begin{scope}[
+yshift=0,every node/.append style={
+	yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
+]
+\fill[white,fill opacity=.9] (0,0) rectangle (5,5);
+\draw[black,very thick] (0,0) rectangle (5,5);
+\draw[step=5mm, black] (0,0) grid (5,5);
+\uncover<2->{\fill[greennewcolor] (0.05,0.05) rectangle (0.46,0.46);}
+\uncover<3>{\fill[bluenewcolor] (1.97,2.97) rectangle (1.53,2.53);}
+\uncover<4>{\fill[red] (1.97,2.97) rectangle (1.53,2.53);}
+\uncover<5>{\fill[bluenewcolor] (3.97,3.97) rectangle (3.53,3.53);}
+\uncover<6->{\fill[greennewcolor] (3.97,3.97) rectangle (3.53,3.53);}
+\uncover<9>{\fill[bluenewcolor] (2.97,0.05) rectangle (2.53,0.46);}
+\uncover<10->{\fill[greennewcolor] (2.97,0.05) rectangle (2.53,0.46);}
+\end{scope}
+
+\begin{scope}[
+yshift=5,every node/.append style={
+	yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
+]
+\uncover<7->{\fill[white,fill opacity=.4] (3.97,3.97) rectangle (3.53,3.53);}
+
+\uncover<7->{\draw[black,densely dotted] (3.97,3.97) rectangle (3.53,3.53);}
+\end{scope}
+
+\begin{scope}[
+yshift=10,every node/.append style={
+	yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
+]
+\uncover<8->{\fill[white,fill opacity=.4] (3.97,3.97) rectangle (3.53,3.53);}
+
+\uncover<8->{\draw[black,densely dotted] (3.97,3.97) rectangle (3.53,3.53);}
+\end{scope}
+\uncover<2->{\draw[-latex,thick,greennewcolor](5.3,4.0)node[right]{$\mathsf{|D_0\rangle}$}
+	to[out=180,in=90] (0,0.5);}
+\uncover<3>{\draw[-latex,thick,bluenewcolor](-3.3,5.2)node[left]{$\mathsf{|D_{1}^{13}\rangle}$}
+	to[out=0,in=90] (-0.97,2.55);}
+\uncover<4>{\draw[-latex,thick,red](-3.3,5.2)node[left]{$\mathsf{|D_{1}^{13}\rangle}$}
+	to[out=0,in=90] (-0.97,2.55);}
+
+\uncover<5->{\draw[-latex,thick,bluenewcolor](3.3,6.0)node[right]{$\mathsf{|D_{4\ \ 7}^{18 \ 31}\rangle}$}
+	to[out=180,in=90] (0,4.0);}
+\uncover<9->{\draw[-latex,thick,bluenewcolor](5.3,3.0)node[right]{$\mathsf{|D_2^{12}\rangle}$}
+	to[out=180,in=90] (2.5,1.75);}
+
+\uncover<4>{\draw[thick,black](4.0,0.5)node[right]{$\langle D_1^{13}|H|D_0\rangle = 0$};}
+\uncover<5>{\draw[thick,black](4.0,0.5)node[right]{$\langle D_{4\ \ 7}^{18 \ 31}|H|D_0\rangle \neq 0$};}
+\uncover<10>{\draw[thick,black](4.0,0.5)node[right]{$\langle D_2^{12}|H|D_0\rangle \neq 0$};}
+\end{tikzpicture}
+\begin{equation*}
+\only<1-6>{\Big[ D_0 \mid  \dots \Big]}\phantom{7}\only<7-9>{\Big[ D_0 \mid D_{4\ \ 7}^{18 \ 31} \mid \dots \Big]}\only<10->{\Big[ D_0 \mid D_{4\ \ 7}^{18 \ 31} \mid D_2^{12} \mid \dots \Big]}
 \end{equation*}
-\only<1>{\begin{equation*}
-\Psi_{cc} = \big[1 + \sum_{\boldsymbol{i}} t_{\boldsymbol{i}}\hat{a}_{\boldsymbol{i}} + \frac{1}{ 2!}\sum_{\boldsymbol{ij}} t_{\boldsymbol{i}} t_{\boldsymbol{j}} \hat{a}_{\boldsymbol{i}} \hat{a}_{\boldsymbol{j}} + \frac{1}{ 3!}\sum_{\boldsymbol{ijk}}t_{\boldsymbol{i}} t_{\boldsymbol{j}} t_{\boldsymbol{k}} \hat{a}_{\boldsymbol{i}} \hat{b}_{\boldsymbol{j}} \hat{a}_{\boldsymbol{k}} + ...  \big]|D_0\rangle.
-\end{equation*}}
+\begin{equation*}
+\only<1-6>{\Big[N_0 \mid \dots \Big]}\phantom{7}\only<7>{\Big[N_0 \mid \ \ +1 \ \ \mid \dots \Big]}\only<8-9>{\Big[N_0 \mid \ \ +2 \ \ \mid \dots \Big]}\only<10->{\Big[N_0 \mid \ \ +2 \ \ \mid  -1 \ \ \mid \dots \Big]}
+\end{equation*}
 \end{frame}
 
 
