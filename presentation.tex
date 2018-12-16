@@ -335,7 +335,35 @@ here $s_\alpha = \pm 1$ is sign of excip, $t_{\boldsymbol{i}}$ is an amplitude c
 %\end{equation*}}
 \end{frame}
 
+\begin{frame}
+\frametitle{Life and Death}
+CCQMC simulated equation:
+\begin{equation*}	
+\frac{\delta t_{\{\boldsymbol{i}\}}}{\delta\tau} = -\langle D_{\{\boldsymbol{i}\}}|(\hat{H}-S)e^{\hat{T}}|D_0\rangle,
+\end{equation*}
+Exponential ansatz:
+\begin{equation*}
+\Psi_{cc} = \big[1 + \sum_{\boldsymbol{i}} t_{\boldsymbol{i}}\hat{a}_{\boldsymbol{i}} + \frac{1}{ 2!}\sum_{\boldsymbol{ij}} t_{\boldsymbol{i}} t_{\boldsymbol{j}} \hat{a}_{\boldsymbol{i}} \hat{a}_{\boldsymbol{j}} + \frac{1}{ 3!}\sum_{\boldsymbol{ijk}}t_{\boldsymbol{i}} t_{\boldsymbol{j}} t_{\boldsymbol{k}} \hat{a}_{\boldsymbol{i}} \hat{b}_{\boldsymbol{j}} \hat{a}_{\boldsymbol{k}} + ...  \big]|D_0\rangle.
+\end{equation*}
+After the wave function collapse:
+\begin{equation*}	
+\frac{\delta t_{\{\boldsymbol{i}\}}}{\delta\tau} = -\langle D_n|(\hat{H}-S)|D_m\rangle,
+\end{equation*}
+These determinants are connected through the Hamiltonian.
+\end{frame}
 
+
+\begin{frame}
+\frametitle{Life and Death}
+The spawn(birth) step:
+\begin{equation*}
+P_{\text{spawn}} = \underbrace{\delta \tau |A H_{nm}|}_{\text{physics}} \underbrace{\frac{1}{N_a p_{size}(s) p_{clust} (e|s)}}_{\text{sampling ket-part}} \underbrace{\frac{1}{P_{gen}}}_{\text{sampling bra-part}},
+\end{equation*}
+The death step:
+\begin{equation*}
+P_{\text{death}} = \delta \tau | A (H_{mm}-S) | \frac{1}{N_a p_{size}(s) p_{clust} (e|s)} .
+\end{equation*}
+\end{frame}
 
 \begin{frame}
 \frametitle{CCQMC: Game of Life}
@@ -408,6 +436,118 @@ yshift=10,every node/.append style={
 \only<1-6>{\Big[N_0 \mid \dots \Big]}\phantom{7}\only<7>{\Big[N_0 \mid \ \ +1 \ \ \mid \dots \Big]}\only<8-9>{\Big[N_0 \mid \ \ +2 \ \ \mid \dots \Big]}\only<10->{\Big[N_0 \mid \ \ +2 \ \ \mid  -1 \ \ \mid \dots \Big]}
 \end{equation*}
 \end{frame}
+
+
+\begin{frame}
+\frametitle{Iteration}
+\begin{columns}
+	\begin{column}{0.48\textwidth}
+		\begin{center}
+			\begin{equation*}	
+			\only<1,9,17>{-\langle D_{\{\boldsymbol{i}\}}|(\hat{H}-S)|\Psi_{cc}\rangle}\vphantom{\langle \underline{D_{\{\boldsymbol{i}\}}}|(\hat{H}-S)|D_n\rangle}
+			\only<2-3,10,18-21>{-\langle D_{\{\boldsymbol{i}\}}|(\hat{H}-S)|\underline{\Psi_{cc}}\rangle}
+			\only<4-5>{-\langle D_{\{\boldsymbol{i}\}}|(\hat{H}-S)|D_n\rangle}
+			\only<6>{-\langle \underline{D_{\{\boldsymbol{i}\}}}|(\hat{H}-S)|D_n\rangle}
+			\only<7-8>{-\langle D_{m}|(\hat{H}-S)|D_n\rangle}
+			\only<11>{-\langle D_{\{\boldsymbol{i}\}}|(\hat{H}-S)|D_{n^\prime}\rangle}
+			\only<12>{-\langle \underline{D_{\{\boldsymbol{i}\}}}|(\hat{H}-S)|D_{n^\prime}\rangle}
+			\only<13-14>{-\langle D_{m^\prime}|(\hat{H}-S)|D_{n^\prime}\rangle}
+			\only<15-16>{-\langle D_{m^{\prime\prime}}|(\hat{H}-S)|D_{n^\prime}\rangle}
+			\only<22->{-\langle D_i^c |\hat{H}|D_{ijk}^{abc}\rangle}
+			\end{equation*}
+			
+			\begin{tikzpicture}[scale=.6,every node/.style={minimum size=1cm},on grid]
+			
+			%UNDER
+			\begin{scope}[
+			yshift=-5,every node/.append style={yslant=0.5,xslant=-1},yslant=0.5,xslant=-1]
+			\uncover<1-16>{\fill[greennewcolor,fill opacity=.4] (2.97,0.05) rectangle (2.53,0.46);}
+			\uncover<1-16>{\draw[black,densely dotted] (2.97,0.05) rectangle (2.53,0.46);}
+			\end{scope}
+			
+			%MAIN
+			\begin{scope}[yshift=0,every node/.append style={yslant=0.5,xslant=-1},yslant=0.5,xslant=-1]
+			\fill[white,fill opacity=.9] (0,0) rectangle (5,5);
+			\draw[black,very thick] (0,0) rectangle (5,5);
+			\draw[step=5mm, black] (0,0) grid (5,5);
+			\uncover<1->{\fill[greennewcolor] (0.05,0.05) rectangle (0.46,0.46);}
+			\uncover<1->{\fill[greennewcolor] (3.97,3.97) rectangle (3.53,3.53);}
+			\uncover<11-15>{\fill[bluenewcolor] (3.97,3.97) rectangle (3.53,3.53);}
+			\uncover<1-16>{\fill[greennewcolor] (2.97,0.05) rectangle (2.53,0.46);}
+			\uncover<4-8>{\fill[bluenewcolor] (2.97,0.05) rectangle (2.53,0.46);}
+			\uncover<7>{\fill[bluenewcolor] (1.47,2.03) rectangle (1.03,2.47);}
+			\uncover<8->{\fill[greennewcolor] (1.47,2.03) rectangle (1.03,2.47);}
+			\uncover<13>{\fill[bluenewcolor] (0.47,3.03) rectangle (0.03,3.47);}
+			\uncover<14>{\fill[red] (0.47,3.03) rectangle (0.03,3.47);}
+			\uncover<15>{\fill[bluenewcolor] (2.97,0.05) rectangle (2.53,0.46);}
+			%composite ket
+			\uncover<19->{\fill[bluenewcolor] (0.47,3.03) rectangle (0.03,3.47);}
+			%composite bra
+			\uncover<21->{\fill[bluenewcolor] (2.47,1.03) rectangle (2.03,1.47);}
+			\end{scope}
+			%ABOVE		
+			\begin{scope}[
+			yshift=5,every node/.append style={yslant=0.5,xslant=-1},yslant=0.5,xslant=-1]
+			\uncover<1->{\fill[white,fill opacity=.4] (3.97,3.97) rectangle (3.53,3.53);}
+			\uncover<1->{\draw[black,densely dotted] (3.97,3.97) rectangle (3.53,3.53);}
+			\uncover<8->{\fill[white,fill opacity=.4] (1.47,2.03) rectangle (1.03,2.47);}
+			\uncover<8->{\draw[black,densely dotted] (1.47,2.03) rectangle (1.03,2.47);}
+			\uncover<16>{\fill[white,fill opacity=.4] (2.97,0.05) rectangle (2.53,0.46);}
+			\uncover<16>{\draw[black,densely dotted] (2.97,0.05) rectangle (2.53,0.46);}
+			\end{scope}
+			%ABOVE#2
+			\begin{scope}[
+			yshift=10,every node/.append style={yslant=0.5,xslant=-1},yslant=0.5,xslant=-1]
+			\uncover<1-16>{\fill[white,fill opacity=.4] (3.97,3.97) rectangle (3.53,3.53);}
+			\uncover<1-16>{\draw[black,densely dotted] (3.97,3.97) rectangle (3.53,3.53);}
+			\end{scope}
+			
+			
+			%HAMILTONIAN
+			\uncover<7-8>{\draw[-latex,thick,bluenewcolor](2.5,1.75)node[right]{}to[out=100,in=70] (-0.97,2.05);}
+			\uncover<13-14>{\draw[-latex,thick,bluenewcolor](0,4.0)node[right]{} to[out=175,in=60] (-2.97,2.10);}
+			\uncover<15> {\draw[-latex,thick,bluenewcolor](0,4.0)node[right]{} to[out=30,in=90] (2.5,1.75);}
+			
+			
+			
+			\end{tikzpicture}
+		\end{center}
+	\end{column}
+	\begin{column}{0.48\textwidth}
+		\begin{center}
+			\begin{tikzpicture}[node distance=0.5cm]
+			\node(SelectCluster)[roundrectSmallLong]{Sampling $|\Psi_{CC}\rangle$};
+			\node(ConstructCluster)[roundrectSmallLong, below of=SelectCluster, yshift=-0.6cm]{Sampling $\hat{H}$};
+			\node(Offdiagonal)[roundrectSmall, below left of=ConstructCluster, yshift=-0.7cm, xshift=-1.1cm ]{Spawn };
+			\node(Diagonal)[roundrectSmall, below right of=ConstructCluster, yshift=-0.7cm,xshift=1.1cm]{Death };
+			\node(StoreExcip)[roundrectSmallLong, below of=Diagonal, yshift=-0.6cm, xshift=-1.4cm]{Store excips};
+			\node(Annihilation)[roundrectSmallLong, below of=StoreExcip, yshift=-0.6cm]{Annihilation};
+			\draw [arrow] (SelectCluster) -- (ConstructCluster);
+			\draw [arrow] (ConstructCluster) -- (Offdiagonal);
+			\draw [arrow] (ConstructCluster) -- (Diagonal);
+			\draw [arrow] (Offdiagonal) -- (StoreExcip);
+			\draw [arrow] (Diagonal) -- (StoreExcip);	
+			\draw [arrow] (StoreExcip) -- (Annihilation);
+			\end{tikzpicture}
+		\end{center}
+	\end{column}
+\end{columns}	
+\begin{equation*}
+\Psi_{cc} = \big[1 +\only<1-2,18->{\sum_{\boldsymbol{i}} t_{\boldsymbol{i}}\hat{a}_{\boldsymbol{i}}\vphantom{\underbrace{\sum_{\boldsymbol{i}} t_{\boldsymbol{i}}\hat{a}_{\boldsymbol{i}}}_\text{size one}}}\only<3-17>{\underbrace{\sum_{\boldsymbol{i}} t_{\boldsymbol{i}}\hat{a}_{\boldsymbol{i}}}_\text{size one}}+
+\only<1-17>{\sum_{\boldsymbol{ij}} t_{\boldsymbol{i}} t_{\boldsymbol{j}} \hat{a}_{\boldsymbol{i}} \hat{a}_{\boldsymbol{j}}}\vphantom{\underbrace{\sum_{\boldsymbol{ij}} t_{\boldsymbol{i}} t_{\boldsymbol{j}} \hat{a}_{\boldsymbol{i}} \hat{a}_{\boldsymbol{j}}}_\text{size two}}
+\only<18->{\underbrace{\sum_{\boldsymbol{ij}} t_{\boldsymbol{i}} t_{\boldsymbol{j}} \hat{a}_{\boldsymbol{i}} \hat{a}_{\boldsymbol{j}}}_\text{size two}}
++ \sum_{\boldsymbol{ijk}}t_{\boldsymbol{i}} t_{\boldsymbol{j}} t_{\boldsymbol{k}} \hat{a}_{\boldsymbol{i}} \hat{b}_{\boldsymbol{j}} \hat{a}_{\boldsymbol{k}} + ...  \big]|D_0\rangle.
+\end{equation*}
+\begin{equation*}
+\only<18>{\hat{c}_{ik}^{ac} \ -\hat{c}_j^b}
+\only<19>{\hat{c}_{ik}^{ac} \ -\hat{c}_j^b \rightarrow -\hat{c}_{ijk}^{abc}}
+\only<20>{-\hat{c}_{ijk}^{abc}|D_0\rangle = -|D_{ijk}^{abc}\rangle}
+\only<21>{-|D_{ijk}^{abc}\rangle \rightarrow \ \ ^c_i}
+\only<22>{\delta\tau \langle D_i^c |\hat{H}|D_{ijk}^{abc}\rangle }
+\only<23>{\delta\tau \langle D_{ijk}^{abc} |\hat{H}-S|D_{ijk}^{abc}\rangle }
+\end{equation*}
+\end{frame}
+
 
 
 \section{Results}
