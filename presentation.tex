@@ -99,7 +99,7 @@
 \def\mathunderline#1#2{\color{#1}\underline{{\color{black}#2}}\color{black}}
 
 
-\title{Master thesis presentation\\
+\title{Master Thesis Presentation\\
 STOCHASTIC APPROACH TO MANY-BODY PROBLEMS}
 \date{\today}
 \author{Anna Gribkovakaya}
@@ -123,10 +123,10 @@ STOCHASTIC APPROACH TO MANY-BODY PROBLEMS}
 	The main objectives:
 	\begin{itemize}
  	\item Implement numerical methods to solve the Time Independent Schr\"{o}dinger equation for N electrons
- 	\item Study the Homogeneous Electron gas using Coupled Custer approach
- 	\item Study the Homogeneous Electron gas using the Coupled Custer Monte Carlo approach
- 	\item Compare the two methods
- 	\item Develop a code that can be used for other systems (Quantum Dots)
+ 	\item Develop a Coupled Cluster Doubles code capable of handling relatively large systems
+ 	\item The code should be general and can be applied to other systems
+ 	\item Develop a Stochastic Coupled Cluster Doubles code
+ 	\item Compare two methods
 	\end{itemize}
 	\end{frame}
 
@@ -354,20 +354,17 @@ These determinants are connected through the Hamiltonian.
 
 
 \begin{frame}
-\frametitle{Life and Death}
-The spawn(birth) step:
+\frametitle{CCQMC: Game of Life}
+Probability to spawn:
 \begin{equation*}
-P_{\text{spawn}} = \underbrace{\delta \tau |A H_{nm}|}_{\text{physics}} \underbrace{\frac{1}{N_a p_{size}(s) p_{clust} (e|s)}}_{\text{sampling ket-part}} \underbrace{\frac{1}{P_{gen}}}_{\text{sampling bra-part}},
+P_{\text{spawn}} =\delta \tau |A H_{nm}| \frac{1}N_a p_{size}(s) p_{clust} (e|s)\frac{1}{P_{gen}},
 \end{equation*}
-The death step:
+Probability do die:
 \begin{equation*}
 P_{\text{death}} = \delta \tau | A (H_{mm}-S) | \frac{1}{N_a p_{size}(s) p_{clust} (e|s)} .
 \end{equation*}
 \end{frame}
 
-\begin{frame}
-\frametitle{CCQMC: Game of Life}
-\end{frame}
 
 \begin{frame}
 \frametitle{First Iteration}
@@ -440,10 +437,8 @@ yshift=10,every node/.append style={
 
 \begin{frame}
 \frametitle{Iteration}
-\begin{columns}
-	\begin{column}{0.48\textwidth}
-		\begin{center}
-			\begin{equation*}	
+		
+			\begin{align*}	
 			\only<1,9,17>{-\langle D_{\{\boldsymbol{i}\}}|(\hat{H}-S)|\Psi_{cc}\rangle}\vphantom{\langle \underline{D_{\{\boldsymbol{i}\}}}|(\hat{H}-S)|D_n\rangle}
 			\only<2-3,10,18-21>{-\langle D_{\{\boldsymbol{i}\}}|(\hat{H}-S)|\underline{\Psi_{cc}}\rangle}
 			\only<4-5>{-\langle D_{\{\boldsymbol{i}\}}|(\hat{H}-S)|D_n\rangle}
@@ -454,9 +449,10 @@ yshift=10,every node/.append style={
 			\only<13-14>{-\langle D_{m^\prime}|(\hat{H}-S)|D_{n^\prime}\rangle}
 			\only<15-16>{-\langle D_{m^{\prime\prime}}|(\hat{H}-S)|D_{n^\prime}\rangle}
 			\only<22->{-\langle D_i^c |\hat{H}|D_{ijk}^{abc}\rangle}
-			\end{equation*}
-			
-			\begin{tikzpicture}[scale=.6,every node/.style={minimum size=1cm},on grid]
+			\end{align*}
+		
+			\begin{center}
+			\begin{tikzpicture}[scale=.7,every node/.style={minimum size=1cm},on grid]
 			
 			%UNDER
 			\begin{scope}[
@@ -511,27 +507,7 @@ yshift=10,every node/.append style={
 			
 			
 			\end{tikzpicture}
-		\end{center}
-	\end{column}
-	\begin{column}{0.48\textwidth}
-		\begin{center}
-			\begin{tikzpicture}[node distance=0.5cm]
-			\node(SelectCluster)[roundrectSmallLong]{Sampling $|\Psi_{CC}\rangle$};
-			\node(ConstructCluster)[roundrectSmallLong, below of=SelectCluster, yshift=-0.6cm]{Sampling $\hat{H}$};
-			\node(Offdiagonal)[roundrectSmall, below left of=ConstructCluster, yshift=-0.7cm, xshift=-1.1cm ]{Spawn };
-			\node(Diagonal)[roundrectSmall, below right of=ConstructCluster, yshift=-0.7cm,xshift=1.1cm]{Death };
-			\node(StoreExcip)[roundrectSmallLong, below of=Diagonal, yshift=-0.6cm, xshift=-1.4cm]{Store excips};
-			\node(Annihilation)[roundrectSmallLong, below of=StoreExcip, yshift=-0.6cm]{Annihilation};
-			\draw [arrow] (SelectCluster) -- (ConstructCluster);
-			\draw [arrow] (ConstructCluster) -- (Offdiagonal);
-			\draw [arrow] (ConstructCluster) -- (Diagonal);
-			\draw [arrow] (Offdiagonal) -- (StoreExcip);
-			\draw [arrow] (Diagonal) -- (StoreExcip);	
-			\draw [arrow] (StoreExcip) -- (Annihilation);
-			\end{tikzpicture}
-		\end{center}
-	\end{column}
-\end{columns}	
+		\end{center}	
 \begin{equation*}
 \Psi_{cc} = \big[1 +\only<1-2,18->{\sum_{\boldsymbol{i}} t_{\boldsymbol{i}}\hat{a}_{\boldsymbol{i}}\vphantom{\underbrace{\sum_{\boldsymbol{i}} t_{\boldsymbol{i}}\hat{a}_{\boldsymbol{i}}}_\text{size one}}}\only<3-17>{\underbrace{\sum_{\boldsymbol{i}} t_{\boldsymbol{i}}\hat{a}_{\boldsymbol{i}}}_\text{size one}}+
 \only<1-17>{\sum_{\boldsymbol{ij}} t_{\boldsymbol{i}} t_{\boldsymbol{j}} \hat{a}_{\boldsymbol{i}} \hat{a}_{\boldsymbol{j}}}\vphantom{\underbrace{\sum_{\boldsymbol{ij}} t_{\boldsymbol{i}} t_{\boldsymbol{j}} \hat{a}_{\boldsymbol{i}} \hat{a}_{\boldsymbol{j}}}_\text{size two}}
@@ -678,8 +654,6 @@ FCIQMC\footnote{\tiny J. J. Shepherd, G. H. Booth, and A. Alavi, J. Chem. Phys. 
 %\end{thebibliography}
 
 %\footnote{\tiny Verena A. Neufeld and Alex J. W. Thom. "A Study of the Dense Uniform Electron Gas with High Orders of Coupled Cluster". The Journal of Chemical Physics 147.19 (Nov. 2017)}
-
-
 \end{frame}
 
 
