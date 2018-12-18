@@ -104,15 +104,19 @@ STOCHASTIC APPROACH TO MANY-BODY PROBLEMS}
 \date{\today}
 \author{Anna Gribkovakaya}
 \institute{University of Oslo}
+\titlegraphic{
+	\begin{picture}(0,0)
+	\put(300,-125){\makebox(0,0)[rt]{\includegraphics[width=3cm]{UiOlogo}}}
+	\end{picture}}
+
 \begin{document}
   \maketitle
   \section{Introduction}
    \begin{frame}{Outline}
    \begin{itemize}
    	\item Main Objectives
+   		\item Many-body problem formulation and Size of the Hilbert Space
    	\item Many body \textit{Ab initio} methods: deterministic and stochastic
-   	\item Many-body problem formulation
-   	\item Slater Determinant space
    	\item Coupled Cluster Theory
    	\item Coupled Cluster Quantum Monte Carlo
    	\item Results
@@ -126,37 +130,20 @@ STOCHASTIC APPROACH TO MANY-BODY PROBLEMS}
  	\item Develop a Coupled Cluster Doubles code capable of handling relatively large systems
  	\item The code should be general and can be applied to other systems
  	\item Develop a Stochastic Coupled Cluster Doubles code
- 	\item Compare two methods
+ 	\item Benchmarking with other methods
 	\end{itemize}
 	\end{frame}
 
 
   \section{Main Part}
   
-  \begin{frame}{Many-body: \textit{Ab initio} quantum many body methods}
-  \uncover<1->{Deterministic or Wave Function Methods}
-  \uncover<1->{ \begin{itemize}
-  		\item Hatree-Fock Method
-  		\item Many Body Perturbation Theory
-  		\item Full Configuration Interaction 
-  		\item Coupled Cluster Method
-  \end{itemize}}
-   \uncover<2->{Stochastic or Monte Carlo (MC) Methods}
-  	  \uncover<2->{	\begin{itemize}
-  		\item Variational MC
-  		\item Diffusion MC
-  		\item Full Configuration MC
-  		\item Coupled Cluster MC
-  	\end{itemize}}
-  \uncover<3->{Density Functional Theory - widely used, but has issues}
-   \end{frame}
-  \begin{frame}{Many-body: problem formulation}
+\begin{frame}{Many-body: problem formulation}
 The Hamiltonian for quantum mechanical system consisting of N particles  can be written as
 \begin{equation*}
-\hat{H} = -\frac{1}{2}\sum_{i=1}^{N} \nabla_i^2 + \sum_{i<j}^{N}\frac{1}{r_{ij}} - \sum_{i=1}^{N} \hat{V}(r_i),
+\hat{H} = -\frac{1}{2}\sum_{i=1}^{N} \nabla_i^2 + \sum_{i<j}^{N}\frac{1}{r_{ij}} + \sum_{i=1}^{N} \hat{V}_{\text{external}}(r_i),
 \end{equation*}
 $r_{ij}$  relative distance between the particles, \\
-$\hat{V}(r_i)$  potential that represents the system under consideration.\\
+$\hat{V}_{\text{external}}(r_i)$ external one-body potential.\\
 
 Stationary Schr\"{o}dinger equation can be written as:
 \begin{equation*}
@@ -171,14 +158,13 @@ For fermions the wave function must be antisymmetric:
 \Psi_n({\dots, \vec{R}_p , \dots, \vec{R}_q, \dots}) = -\Psi_n({\dots, \vec{R}_q , \dots, \vec{R}_p, \ \dots}),
 \end{equation*}
 \end{frame}
-  \begin{frame}{Many-body: Slater Determinant Space}
-  \begin{itemize}
+
+\begin{frame}{Many-body: Slater Determinant Space}
+\begin{itemize}
   	\item Slater Determinant (SD) Space is a Hilbert space for fermions 
-  	\item Each SD is constructed from $N$ orthonormal single electron
+  	\item Each SD is constructed from $N$ orthonormal single particle
   	wavefunctions
-  	
   	\item SD for reference vacuum state :
- 
   \begin{equation*}
   |D_0\rangle = \frac{1}{\sqrt{N!}}
   \left| \begin{array}{ccccc} \psi_{1}(x_1)& \psi_{1}(x_2)& \dots & \psi_{1}(x_N)\\
@@ -193,13 +179,43 @@ For fermions the wave function must be antisymmetric:
  \begin{frame}{Many-body: Size of the Slater Determinant Space}
 An orthonormal set of 2M spin-orbitals, where N are occupied.
 \begin{equation*}
-\binom {N}{2M} = \frac{N!}{2M!(2M-N)!}, 
+\binom {2M}{N} = \frac{(2M)!}{N!(2M-N)!}, 
 \end{equation*}
+\begin{center}
+	\begin{columns}
+		\begin{column}{0.5\textwidth}
+For the electron gas, $N$=14:   \\
+$2M$=38 ($N_s$=3)  	$\rightarrow$ $10^{10}$ \\
+$2M$=246 ($N_s$=10)	$\rightarrow$ $10^{22}$\\
+$2M$=730 ($N_s$=20)	$\rightarrow$ $10^{29}$
+		\end{column}
+		\begin{column}{0.5\textwidth}  %%<--- here
+			For Quantum Dot, $N$=20:   \\
+			$2M$=110 ($N_s$=10)  	$\rightarrow$ $10^{21}$ \\
+			$2M$=420 ($N_s$=20)	$\rightarrow$ $10^{33}$\\
+			$2M$=930 ($N_s$=30)	$\rightarrow$ $10^{40}$,
+		\end{column}
+	\end{columns}
+\end{center}
+here $N_s$ is shell number.
+\end{frame}
 
-For the electron gas:\\
-$N$=14, $2M$=3/38	$\rightarrow$ $10^{10}$\\
-$N$=14, $2M$=10/246	$\rightarrow$ $10^{22}$\\
-$N$=14, $2M$=20/730	$\rightarrow$ $10^{29}$
+  \begin{frame}{Many-body: \textit{Ab initio} quantum many body methods}
+\uncover<1->{Deterministic Wave Function Methods}
+\uncover<1->{ \begin{itemize}
+		\item Hartree-Fock Method
+		\item Many Body Perturbation Theory
+		\item Full Configuration Interaction 
+		\item Coupled Cluster Method
+\end{itemize}}
+\uncover<2->{Stochastic or Monte Carlo (MC) Methods}
+\uncover<2->{	\begin{itemize}
+		\item Variational MC
+		\item Diffusion MC
+		\item Full Configuration MC
+		\item Coupled Cluster MC
+\end{itemize}}
+\uncover<3->{Density Functional Theory}
 \end{frame}
 
 
@@ -207,7 +223,7 @@ $N$=14, $2M$=20/730	$\rightarrow$ $10^{29}$
 \section{Coupled Cluster Theory}
 
   \begin{frame}{Coupled cluster theory: Exponential ansatz}
-	The approximation for wave function for Coupled Cluster is:
+  The Coupled Cluster approximation for wavefunction is:
 	\begin{equation*}
 	\Psi_{CC} =  e^{\hat{T}}|D_0\rangle,
 	\end{equation*}
@@ -224,10 +240,7 @@ $N$=14, $2M$=20/730	$\rightarrow$ $10^{29}$
 	\,
 	\]
 	here $i,j,k$ indexes denote the orbitals that are occupied in the reference determinant and $a,b,c$ denote those that are not.
-	
 \end{frame}
-
-
 
 
 \begin{frame}
@@ -336,7 +349,7 @@ here $s_\alpha = \pm 1$ is sign of excip, $t_{\boldsymbol{i}}$ is an amplitude c
 \end{frame}
 
 \begin{frame}
-\frametitle{Life and Death}
+\frametitle{CCQMC: Game of Life}
 CCQMC simulated equation:
 \begin{equation*}	
 \frac{\delta t_{\{\boldsymbol{i}\}}}{\delta\tau} = -\langle D_{\{\boldsymbol{i}\}}|(\hat{H}-S)e^{\hat{T}}|D_0\rangle,
@@ -357,12 +370,24 @@ These determinants are connected through the Hamiltonian.
 \frametitle{CCQMC: Game of Life}
 Probability to spawn:
 \begin{equation*}
-P_{\text{spawn}} =\delta \tau |A H_{nm}| \frac{1}N_a p_{size}(s) p_{clust} (e|s)\frac{1}{P_{gen}},
+P_{\text{spawn}} =\delta \tau |A H_{nm}| \frac{1}N_a p_{size}(s) p_{clust} (e|s)\frac{1}{p_{gen}},
 \end{equation*}
 Probability do die:
 \begin{equation*}
 P_{\text{death}} = \delta \tau | A (H_{mm}-S) | \frac{1}{N_a p_{size}(s) p_{clust} (e|s)} .
 \end{equation*}
+\end{frame}
+
+\begin{frame}
+\frametitle{CCQMC: Game of Life}
+Probabilities:
+\begin{align*}
+&p_{size}(s)=\frac{1}{2^{s+1}},\\
+&A = N_0 \sum_{i=1}^{s} \frac{N_i}{N_0}, \\
+&p_{clust} (e|s)=s! \prod_{i=1}^{s}\frac{|N_i|}{N_{ex}},\\
+&p_{gen}=p(r,s|p,q)p(p,q), \ \ \ p(p,q) = \binom{N}{2}^{-1}\\
+&p(r,s|p,q)=p(r|s, p,q)p(s|p,q) + p(s|r, p,q)p(r|p,q).
+\end{align*}
 \end{frame}
 
 
@@ -503,8 +528,6 @@ yshift=10,every node/.append style={
 			\uncover<7-8>{\draw[-latex,thick,bluenewcolor](2.5,1.75)node[right]{}to[out=100,in=70] (-0.97,2.05);}
 			\uncover<13-14>{\draw[-latex,thick,bluenewcolor](0,4.0)node[right]{} to[out=175,in=60] (-2.97,2.10);}
 			\uncover<15> {\draw[-latex,thick,bluenewcolor](0,4.0)node[right]{} to[out=30,in=90] (2.5,1.75);}
-			
-			
 			
 			\end{tikzpicture}
 		\end{center}	
@@ -662,31 +685,42 @@ FCIQMC\footnote{\tiny J. J. Shepherd, G. H. Booth, and A. Alavi, J. Chem. Phys. 
 \begin{frame}
 \frametitle{Conclusion}
 \begin{itemize}
-\item We have developed a CCD code capable of handling relatively large system sizes. 
-\item The code was developed with generality in mind, and can be applied for other systems.
-\item Our CCD solver reproduced published results for the homogeneous electron gas.
-\item Deterministic implementation provides a significant benchmark information for the further development of the code for the stochastic CCQMC.
+\item We have developed a CCD solver that reproduced published results for the homogeneous electron gas.
+\item This solver can also be applied to other systems.
+\item We have used this implementation to obtain a significant benchmark information to develop the CCQMC solver.
+\item We have developed a CCQMC solver and found that population of the reference state and truncation level play major roles for the CCQMC algorithm.
+\item The CCQMC method allows us to overcome the rapid growth of space size associated with deterministic methods.
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-\frametitle{Conclusion}
-\begin{itemize}
-\item We have developed a CCD code for the CCQMC algorithm.
-\item The population of the reference state plays one of the majors roles for the CCQMC algorithm.
-\item Transitionally invariant systems are not an optimal choice as a test system for the CCQMC method. At least at low truncation levels.
-\end{itemize}
-\end{frame}
 \section{Future work}
 \begin{frame}
 \frametitle{Future work}
 \begin{itemize}
-\item There is a limited theoretical framework for the CCQMC
-sign problem.
-\item Further research might investigate different sampling schemes.
-\item Optimization techniques such as initiator approximation might be a very important topic for future work.
-\item The optimization of the implementation both numerically and algorithmically.
+\item Implement the method for a higher truncation level.
+\item Investigate different sampling schemes.
+\item Use optimization techniques, for example initiator approximation.
+\item Optimize the implementation both numerically and algorithmically.
+\item Use solver for systems.
 \end{itemize}
 \end{frame}
 
+
+\section{Back Up Slide}
+\begin{frame}
+\frametitle{Sing}
+Possible sing change can occur:
+\begin{itemize}
+	
+\item The sign of the Hamiltonian matrix element $H_{nm}$.
+
+\item The sign of the parent excip. 
+
+\item Combining excitors to form a cluster, we perform reordering of the creation/annihilation operators. Odd number of such permutations causes a sign change in the excip population.
+
+\item Applying the randomly chosen excitor to the reference can result in a sign change.
+
+\item Sampling the action of the Hamiltonian.
+\end{itemize}
+\end{frame}
 \end{document}
